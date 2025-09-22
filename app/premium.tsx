@@ -1,6 +1,7 @@
 import { publicPaystackKey } from "@/ai/payment";
+import { ThemedView } from "@/components/themed-view";
 import React, { useRef } from "react";
-import { View, Button } from "react-native";
+//import { View, Button } from "react-native";
 import { WebView } from "react-native-webview";
 
 const Premium = () => {
@@ -44,14 +45,14 @@ const Premium = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <ThemedView style={{ flex: 1 }}>
       <WebView
         ref={webviewRef}
         originWhitelist={["*"]}
         source={{ html: paystackHTML }}
         onMessage={handleMessage}
       />
-    </View>
+    </ThemedView>
   );
 };
 

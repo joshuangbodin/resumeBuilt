@@ -1,8 +1,6 @@
-import { publicKey } from "@/ai/payment";
 import { ThemedText } from "@/components/themed-text"; // assuming you already use ThemedText
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { router } from "expo-router";
-import Paystack from "paystack-react-native";
 import React, { useEffect } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
@@ -12,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const { width } = Dimensions.get("window");
+// const { width } = Dimensions.get("window");
 
 export default function index() {
   const offset = useSharedValue(50);
@@ -21,7 +19,6 @@ export default function index() {
   useEffect(() => {
     offset.value = 0;
     opacity.value = 1;
-    Paystack?.init(publicKey);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
