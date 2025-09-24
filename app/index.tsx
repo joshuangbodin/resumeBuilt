@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { vh, vw } from "@/helpers/responsive";
 import { Image } from "expo-image";
@@ -14,7 +15,6 @@ import {
 
 export default function Onboarding() {
   const theme = useColorScheme() ?? "light";
-  const colors = Colors[theme];
   const router = useRouter();
 
   const gradientColors: any = () => {
@@ -24,7 +24,7 @@ export default function Onboarding() {
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       {/* Better Background Image — involving resume / document */}
       <Image
         source={require("@/assets/images/splash.png")}
@@ -52,7 +52,7 @@ export default function Onboarding() {
         <View style={styles.buttons}>
           <TouchableOpacity
             style={[styles.button, { backgroundColor: Colors.light.tint }]}
-            onPress={() => router.push("/signin")}
+            onPress={() => router.push("/home")}
           >
             <ThemedText style={[styles.buttonText, { color: "#fff" }]}>
               Get Started
@@ -60,7 +60,7 @@ export default function Onboarding() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: vh(8),
   },
   title: {
+    fontSize: vh(3.2),
     fontWeight: "700",
     marginBottom: vh(2),
     textAlign: "center",

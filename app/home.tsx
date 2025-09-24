@@ -49,7 +49,7 @@ export default function HomeScreen() {
         title="Overview"
         right={
           <TouchableOpacity onPress={() => router.push("signin")}>
-            <ThemedText type="link">Sign In</ThemedText>
+            <ThemedText style={{fontSize:vh(1.8)}} type="link">Sign In</ThemedText>
           </TouchableOpacity>
         }
       />
