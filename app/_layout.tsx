@@ -3,13 +3,11 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { ThemedText } from "@/components/themed-text";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const unstable_settings = {
@@ -25,18 +23,13 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
-          headerStyle: {},
+          headerShown: false,
         }}
       >
         <Stack.Screen
           name="index"
           options={{
             title: "Overview",
-            headerRight: () => (
-              <Pressable onPress={() => router.push("signin")}>
-                <ThemedText>Sign In</ThemedText>
-              </Pressable>
-            ),
           }}
         />
         <Stack.Screen

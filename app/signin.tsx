@@ -1,17 +1,22 @@
+import React, { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { supabase } from "@/supabase/supabase";
+
+import ScreenHeader from "@/components/ScreenHeader";
+import BackButton from "@/components/BackButton";
+import { ThemedText } from "@/components/themed-text";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { vh, vw } from "@/helpers/responsive";
 
 const SignInOtp = () => {
   const [email, setEmail] = useState("");
@@ -20,14 +25,22 @@ const SignInOtp = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Step 1: request OTP (numeric code, not link)
+  // theme colors
+  const backgroundColor = useThemeColor({}, "background");
+  const cardColor = useThemeColor({}, "card");
+  const borderColor = useThemeColor({}, "border");
+  const textColor = useThemeColor({}, "text");
+  const textMuted = useThemeColor({}, "textMuted");
+  const primary = useThemeColor({}, "tint");
+
+  // Step 1: request OTP
   const requestOtp = async () => {
     if (!email) return Alert.alert("Enter your email");
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true }, // auto-register if user doesn't exist
+      options: { shouldCreateUser: true },
     });
 
     setLoading(false);
@@ -38,83 +51,105 @@ const SignInOtp = () => {
     }
   };
 
-  // Step 2: verify OTP code
+  // Step 2: verify OTP
   const verifyOtp = async () => {
     if (!otp) return Alert.alert("Enter the OTP code");
     setLoading(true);
 
     const { data, error } = await supabase.auth.verifyOtp({
       email,
-      token: otp,       // numeric code from email
-      type: "email",    // 👈 ensures it's treated as OTP (not magic link)
+      token: otp,
+      type: "email",
     });
 
     setLoading(false);
     if (error) Alert.alert("Error", error.message);
     else if (data?.session) {
-      router.replace("/(tabs)/home"); // redirect to your app's home
+      router.replace("/home");
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={styles.title}>Welcome 👋</Text>
+    <View style={{ flex: 1, backgroundColor }}>
+      <ScreenHeader title="Authenticate" left={<BackButton />} />
 
-        {stage === "request" ? (
-          <>
-            <Text style={styles.subtitle}>Sign in with your email OTP</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              placeholderTextColor="#888"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TouchableOpacity
-              style={[styles.button, loading && { opacity: 0.6 }]}
-              disabled={loading}
-              onPress={requestOtp}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? "Sending..." : "Send OTP"}
-              </Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <Text style={styles.subtitle}>
-              Enter the OTP we sent to {email}
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter OTP code"
-              placeholderTextColor="#888"
-              keyboardType="number-pad"
-              value={otp}
-              onChangeText={setOtp}
-            />
-            <TouchableOpacity
-              style={[styles.button, loading && { opacity: 0.6 }]}
-              disabled={loading}
-              onPress={verifyOtp}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? "Verifying..." : "Verify OTP"}
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Title */}
+          <ThemedText type="title" style={styles.title}>{stage === "request" ?'Welcome!': '6-digit OTP'}</ThemedText>
+
+          {stage === "request" ? (
+            <>
+              <ThemedText style={[styles.subtitle, { color: textMuted }]}>
+                Sign-in / Sign-Up with your email
+              </ThemedText>
+
+              {/* Email input */}
+              <TextInput
+                style={[
+                  styles.input,
+                  { borderColor, color: textColor, backgroundColor: cardColor },
+                ]}
+                placeholder="Enter your email"
+                placeholderTextColor={textMuted}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+
+              {/* Send OTP button */}
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: primary }]}
+                disabled={loading}
+                onPress={requestOtp}
+              >
+                <ThemedText style={styles.buttonText}>
+                  {loading ? "Sending..." : "Send OTP"}
+                </ThemedText>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <ThemedText style={[styles.subtitle, { color: textMuted }]}>
+                Enter the OTP we sent to {email}
+              </ThemedText>
+
+              {/* OTP input */}
+              <TextInput
+                style={[
+                  styles.input,
+                  { borderColor, color: textColor, backgroundColor: cardColor },
+                ]}
+                placeholder="Enter OTP code"
+                placeholderTextColor={textMuted}
+                keyboardType="number-pad"
+                value={otp}
+                onChangeText={setOtp}
+              />
+
+              {/* Verify OTP button */}
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: primary }]}
+                disabled={loading}
+                onPress={verifyOtp}
+              >
+                <ThemedText style={styles.buttonText}>
+                  {loading ? "Verifying..." : "Verify OTP"}
+                </ThemedText>
+              </TouchableOpacity>
+            </>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -123,47 +158,41 @@ export default SignInOtp;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#F8FAFB",
     alignItems: "center",
     justifyContent: "center",
-    padding: 24,
+    padding: vw(6),
+    paddingTop: vh(5),
   },
   title: {
-    fontSize: 28,
+    fontSize: vw(7),
     fontWeight: "700",
-    color: "#1D1B20",
-    marginBottom: 8,
+    marginBottom: vh(1),
   },
   subtitle: {
-    fontSize: 16,
-    color: "#49454F",
-    marginBottom: 32,
+    fontSize: vw(4),
+    marginBottom: vh(4),
     textAlign: "center",
   },
   input: {
     width: "100%",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#CAC4D0",
-    backgroundColor: "#FFFFFF",
-    fontSize: 16,
-    color: "#1D1B20",
-    marginBottom: 20,
+    borderRadius: 12,
+    paddingVertical: vh(2),
+    paddingHorizontal: vw(4),
+    fontSize: vw(4),
+    marginBottom: vh(2.5),
     textAlign: "center",
   },
   button: {
     width: "100%",
-    backgroundColor: "#6750A4", // Material3 primary
-    paddingVertical: 16,
+    paddingVertical: vh(2.2),
     borderRadius: 12,
     alignItems: "center",
-    elevation: 2,
+    marginTop: vh(1),
   },
   buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: "#fff",
     fontWeight: "600",
+    fontSize: vw(4),
   },
 });

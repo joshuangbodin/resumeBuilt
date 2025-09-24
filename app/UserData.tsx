@@ -1,158 +1,435 @@
-import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import BackButton from "@/components/BackButton";
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/themed-text";
-
-const { width } = Dimensions.get("window");
+import { Colors } from "@/constants/theme";
+import { vh, vw } from "@/helpers/responsive";
+import { useColorScheme } from "@/hooks/use-color-scheme.web";
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function ResumeForm() {
-  const [step, setStep] = useState(0);
-  const translateX = useSharedValue(0);
+  //const { colorScheme } = useColorScheme();
+  const isDark = useColorScheme() === "dark";
 
-  const handleNext = () => {
-    if (step < 4) {
-      setStep(step + 1);
-      translateX.value = withTiming(-(step + 1) * width, { duration: 400 });
+  const [fullName, setFullName] = useState("");
+  const [contact, setContact] = useState("");
+  const [jobRole, setJobRole] = useState("");
+
+  // Experience state
+  const [experiences, setExperiences] = useState<
+    {
+      company: string;
+      role: string;
+      duration: string;
+      responsibilities: string;
+    }[]
+  >([]);
+  const [expInput, setExpInput] = useState({
+    company: "",
+    role: "",
+    duration: "",
+    responsibilities: "",
+  });
+  const [editingExpIndex, setEditingExpIndex] = useState<number | null>(null);
+
+  // Education state
+  const [educations, setEducations] = useState<
+    { institution: string; degree: string; duration: string }[]
+  >([]);
+  const [eduInput, setEduInput] = useState({
+    institution: "",
+    degree: "",
+    duration: "",
+  });
+  const [editingEduIndex, setEditingEduIndex] = useState<number | null>(null);
+
+  // Add or Update Experience
+  const handleSaveExperience = () => {
+    if (editingExpIndex !== null) {
+      const updated = [...experiences];
+      updated[editingExpIndex] = expInput;
+      setExperiences(updated);
+      setEditingExpIndex(null);
+    } else {
+      setExperiences([...experiences, expInput]);
     }
+    setExpInput({ company: "", role: "", duration: "", responsibilities: "" });
   };
 
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(step - 1);
-      translateX.value = withTiming(-(step - 1) * width, { duration: 400 });
-    }
+  const handleEditExperience = (index: number) => {
+    setExpInput(experiences[index]);
+    setEditingExpIndex(index);
   };
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  const handleDeleteExperience = (index: number) => {
+    setExperiences(experiences.filter((_, i) => i !== index));
+  };
+
+  // Add or Update Education
+  const handleSaveEducation = () => {
+    if (editingEduIndex !== null) {
+      const updated = [...educations];
+      updated[editingEduIndex] = eduInput;
+      setEducations(updated);
+      setEditingEduIndex(null);
+    } else {
+      setEducations([...educations, eduInput]);
+    }
+    setEduInput({ institution: "", degree: "", duration: "" });
+  };
+
+  const handleEditEducation = (index: number) => {
+    setEduInput(educations[index]);
+    setEditingEduIndex(index);
+  };
+
+  const handleDeleteEducation = (index: number) => {
+    setEducations(educations.filter((_, i) => i !== index));
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Animated Steps Container */}
-      <Animated.View
-        style={[styles.stepsContainer, animatedStyle]}
-      >
-        {/* Step 1 - Basic Info */}
-        <View style={styles.step}>
-          <ThemedText style={styles.header}>Basic Information</ThemedText>
-          <TextInput style={styles.input} placeholder="Full Name" />
-          <TextInput style={styles.input} placeholder="Contact Details" />
-          <TextInput style={styles.input} placeholder="Desired Job Role" />
-        </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScreenHeader title="Resume Builder" left={<BackButton />} />
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Basic Info */}
+        <ThemedText style={styles.header}>Basic Information</ThemedText>
+        <ThemedText style={styles.label}>Full Name</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={fullName}
+          onChangeText={setFullName}
+          placeholder="John Doe"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Contact Details</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={contact}
+          onChangeText={setContact}
+          placeholder="Email or phone"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Desired Job Role</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={jobRole}
+          onChangeText={setJobRole}
+          placeholder="Frontend Developer"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
 
-        {/* Step 2 - Experience */}
-        <View style={styles.step}>
-          <ThemedText style={styles.header}>Work Experience</ThemedText>
-          <TextInput style={styles.input} placeholder="Company" />
-          <TextInput style={styles.input} placeholder="Role" />
-          <TextInput style={styles.input} placeholder="Duration" />
-          <TextInput style={styles.input} placeholder="Responsibilities" />
-        </View>
-
-        {/* Step 3 - Education */}
-        <View style={styles.step}>
-          <ThemedText style={styles.header}>Education</ThemedText>
-          <TextInput style={styles.input} placeholder="Institution" />
-          <TextInput style={styles.input} placeholder="Degree" />
-          <TextInput style={styles.input} placeholder="Duration" />
-        </View>
-
-        {/* Step 4 - Skills */}
-        <View style={styles.step}>
-          <ThemedText style={styles.header}>Skills</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="E.g. React, TypeScript, Git"
-          />
-        </View>
-
-        {/* Step 5 - Review */}
-        <View style={styles.step}>
-          <ThemedText style={styles.header}>Review & Submit</ThemedText>
-          <ThemedText style={styles.subText}>
-            Check all your details before submitting your resume.
-          </ThemedText>
-        </View>
-      </Animated.View>
-
-      {/* Navigation Buttons */}
-      <View style={styles.navContainer}>
-        {step > 0 && (
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <ThemedText style={styles.navText}>Back</ThemedText>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-          <ThemedText style={styles.navText}>
-            {step === 4 ? "Submit" : "Next"}
+        {/* Experience */}
+        <ThemedText style={styles.header}>Work Experience</ThemedText>
+        <ThemedText style={styles.label}>Company</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={expInput.company}
+          onChangeText={(text) => setExpInput({ ...expInput, company: text })}
+          placeholder="Company Name"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Role</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={expInput.role}
+          onChangeText={(text) => setExpInput({ ...expInput, role: text })}
+          placeholder="Software Engineer"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Duration</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={expInput.duration}
+          onChangeText={(text) => setExpInput({ ...expInput, duration: text })}
+          placeholder="Jan 2020 - Dec 2021"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Responsibilities</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={expInput.responsibilities}
+          onChangeText={(text) =>
+            setExpInput({ ...expInput, responsibilities: text })
+          }
+          placeholder="Developed features..."
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            {
+              backgroundColor: isDark
+                ? Colors.dark.tint
+                : Colors.light.tint,
+            },
+          ]}
+          onPress={handleSaveExperience}
+        >
+          <ThemedText style={styles.addButtonText}>
+            {editingExpIndex !== null ? "Update Experience" : "Add Experience"}
           </ThemedText>
         </TouchableOpacity>
-      </View>
-    </View>
+
+        {experiences.map((exp, index) => (
+          <View
+            key={index}
+            style={[
+              styles.card,
+              {
+                backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+                borderColor: isDark ? Colors.dark.border : Colors.light.border,
+              },
+            ]}
+          >
+            <ThemedText style={styles.cardText}>
+              {exp.role} at {exp.company} ({exp.duration})
+            </ThemedText>
+            <ThemedText style={styles.cardSubText}>
+              {exp.responsibilities}
+            </ThemedText>
+            <View style={styles.cardActions}>
+              <TouchableOpacity onPress={() => handleEditExperience(index)}>
+                <ThemedText style={styles.editText}>Edit</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteExperience(index)}>
+                <ThemedText style={styles.deleteText}>Delete</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+        {/* Education */}
+        <ThemedText style={styles.header}>Education</ThemedText>
+        <ThemedText style={styles.label}>Institution</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={eduInput.institution}
+          onChangeText={(text) =>
+            setEduInput({ ...eduInput, institution: text })
+          }
+          placeholder="University Name"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Degree</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={eduInput.degree}
+          onChangeText={(text) => setEduInput({ ...eduInput, degree: text })}
+          placeholder="BSc Computer Science"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <ThemedText style={styles.label}>Duration</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={eduInput.duration}
+          onChangeText={(text) => setEduInput({ ...eduInput, duration: text })}
+          placeholder="2017 - 2021"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            {
+              backgroundColor: isDark
+                ? Colors.dark.tint
+                : Colors.light.tint,
+            },
+          ]}
+          onPress={handleSaveEducation}
+        >
+          <ThemedText style={styles.addButtonText}>
+            {editingEduIndex !== null ? "Update Education" : "Add Education"}
+          </ThemedText>
+        </TouchableOpacity>
+
+        {educations.map((edu, index) => (
+          <View
+            key={index}
+            style={[
+              styles.card,
+              {
+                backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+                borderColor: isDark ? Colors.dark.border : Colors.light.border,
+              },
+            ]}
+          >
+            <ThemedText style={styles.cardText}>
+              {edu.degree} - {edu.institution} ({edu.duration})
+            </ThemedText>
+            <View style={styles.cardActions}>
+              <TouchableOpacity onPress={() => handleEditEducation(index)}>
+                <ThemedText style={styles.editText}>Edit</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteEducation(index)}>
+                <ThemedText style={styles.deleteText}>Delete</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    //backgroundColor: "#fff",
-    justifyContent: "space-between",
-    paddingBottom: 40,
-  },
-  stepsContainer: {
-    flexDirection: "row",
-    width: width * 5, // 5 steps
-    flex: 1,
-  },
-  step: {
-    width,
-   // gap: 45,
-    paddingHorizontal: 24,
-    justifyContent: "center",
+    padding: vw(5),
+    paddingBottom: vh(8),
   },
   header: {
-    fontSize: 24,
+    fontSize: vw(5),
     fontWeight: "600",
-    marginBottom: 24,
+    marginBottom: vh(2),
+    marginTop: vh(4),
   },
-  subText: {
-    fontSize: 16,
-    color: "#666",
-    marginTop: 12,
+  label: {
+    fontSize: vw(3.5),
+    fontWeight: "500",
+    marginBottom: vh(0.8),
   },
   input: {
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 16,
-    fontSize: 16,
-    //backgroundColor: "#fafafa",
+    borderRadius: vw(3),
+    padding: vh(1.8),
+    marginBottom: vh(2),
+    fontSize: vw(3.8),
   },
-  navContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
+  addButton: {
+    paddingVertical: vh(1.8),
+    borderRadius: vw(3),
+    alignItems: "center",
+    marginBottom: vh(3),
   },
-  backButton: {
-    backgroundColor: "#eee",
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 12,
-  },
-  nextButton: {
-    backgroundColor: "#007AFF", // iOS blue
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 12,
-  },
-  navText: {
-    fontSize: 16,
+  addButtonText: {
     color: "#fff",
+    fontSize: vw(3.8),
+    fontWeight: "600",
+  },
+  card: {
+    borderRadius: vw(3),
+    padding: vh(2),
+    marginBottom: vh(2),
+    borderWidth: 1,
+  },
+  cardText: {
+    fontSize: vw(3.8),
+    fontWeight: "600",
+    marginBottom: vh(1),
+  },
+  cardSubText: {
+    fontSize: vw(3.5),
+    marginBottom: vh(1),
+  },
+  cardActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: vw(4),
+  },
+  editText: {
+    fontWeight: "500",
+  },
+  deleteText: {
+    fontWeight: "500",
   },
 });
