@@ -4,8 +4,11 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
 import { vh, vw } from "@/helpers/responsive";
 import { useColorScheme } from "@/hooks/use-color-scheme.web";
+import { ResumeInput } from "@/types/app.types";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,7 +19,6 @@ import {
 } from "react-native";
 
 export default function ResumeForm() {
-  //const { colorScheme } = useColorScheme();
   const isDark = useColorScheme() === "dark";
 
   const [fullName, setFullName] = useState("");
@@ -50,6 +52,13 @@ export default function ResumeForm() {
     duration: "",
   });
   const [editingEduIndex, setEditingEduIndex] = useState<number | null>(null);
+
+  // Skills state
+  const [skills, setSkills] = useState<string[]>([]);
+  const [skillInput, setSkillInput] = useState("");
+  const [editingSkillIndex, setEditingSkillIndex] = useState<number | null>(
+    null
+  );
 
   // Add or Update Experience
   const handleSaveExperience = () => {
@@ -93,6 +102,51 @@ export default function ResumeForm() {
 
   const handleDeleteEducation = (index: number) => {
     setEducations(educations.filter((_, i) => i !== index));
+  };
+
+  // Add or Update Skill
+  const handleSaveSkill = () => {
+    if (!skillInput.trim()) return;
+    if (editingSkillIndex !== null) {
+      const updated = [...skills];
+      updated[editingSkillIndex] = skillInput.trim();
+      setSkills(updated);
+      setEditingSkillIndex(null);
+    } else {
+      setSkills([...skills, skillInput.trim()]);
+    }
+    setSkillInput("");
+  };
+
+  const handleEditSkill = (index: number) => {
+    setSkillInput(skills[index]);
+    setEditingSkillIndex(index);
+  };
+
+  const handleDeleteSkill = (index: number) => {
+    setSkills(skills.filter((_, i) => i !== index));
+  };
+
+  // Proceed
+  const proceed = () => {
+    if (!fullName || !contact || !jobRole) {
+      Alert.alert("Please Fill out all Basic Information");
+      return;
+    }
+
+    let resumeData: ResumeInput = {
+      name: fullName,
+      contact: contact,
+      jobRole: jobRole,
+      experience: experiences,
+      education: educations,
+      skills: skills,
+    };
+
+    router.push({
+      pathname: "ai",
+      params: { resumeData: JSON.stringify(resumeData) },
+    });
   };
 
   return (
@@ -156,8 +210,10 @@ export default function ResumeForm() {
           }
         />
 
-        {/* Experience */}
+        {/* Work Experience */}
         <ThemedText style={styles.header}>Work Experience</ThemedText>
+        {/* --- unchanged inputs and list --- */}
+        {/* Company */}
         <ThemedText style={styles.label}>Company</ThemedText>
         <TextInput
           style={[
@@ -232,9 +288,7 @@ export default function ResumeForm() {
           style={[
             styles.addButton,
             {
-              backgroundColor: isDark
-                ? Colors.dark.tint
-                : Colors.light.tint,
+              backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint,
             },
           ]}
           onPress={handleSaveExperience}
@@ -274,6 +328,7 @@ export default function ResumeForm() {
 
         {/* Education */}
         <ThemedText style={styles.header}>Education</ThemedText>
+        {/* --- unchanged inputs and list --- */}
         <ThemedText style={styles.label}>Institution</ThemedText>
         <TextInput
           style={[
@@ -331,9 +386,7 @@ export default function ResumeForm() {
           style={[
             styles.addButton,
             {
-              backgroundColor: isDark
-                ? Colors.dark.tint
-                : Colors.light.tint,
+              backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint,
             },
           ]}
           onPress={handleSaveEducation}
@@ -367,6 +420,76 @@ export default function ResumeForm() {
             </View>
           </View>
         ))}
+
+        {/* Skills */}
+        <ThemedText style={styles.header}>Skills</ThemedText>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+              color: isDark ? Colors.dark.text : Colors.light.text,
+              borderColor: isDark ? Colors.dark.border : Colors.light.border,
+            },
+          ]}
+          value={skillInput}
+          onChangeText={setSkillInput}
+          placeholder="e.g. JavaScript, Project Management"
+          placeholderTextColor={
+            isDark ? Colors.dark.subtleText : Colors.light.subtleText
+          }
+        />
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            {
+              backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint,
+            },
+          ]}
+          onPress={handleSaveSkill}
+        >
+          <ThemedText style={styles.addButtonText}>
+            {editingSkillIndex !== null ? "Update Skill" : "Add Skill"}
+          </ThemedText>
+        </TouchableOpacity>
+
+        {skills.map((skill, index) => (
+          <View
+            key={index}
+            style={[
+              styles.card,
+              {
+                backgroundColor: isDark ? Colors.dark.card : Colors.light.card,
+                borderColor: isDark ? Colors.dark.border : Colors.light.border,
+              },
+            ]}
+          >
+            <ThemedText style={styles.cardText}>{skill}</ThemedText>
+            <View style={styles.cardActions}>
+              <TouchableOpacity onPress={() => handleEditSkill(index)}>
+                <ThemedText style={styles.editText}>Edit</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteSkill(index)}>
+                <ThemedText style={styles.deleteText}>Delete</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+        {/* Proceed */}
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            {
+              backgroundColor: isDark
+                ? Colors.dark.accent
+                : Colors.light.accent,
+            },
+          ]}
+          onPress={proceed}
+        >
+          <ThemedText style={styles.addButtonText}>Proceed</ThemedText>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -396,7 +519,7 @@ const styles = StyleSheet.create({
     fontSize: vw(3.8),
   },
   addButton: {
-    paddingVertical: vh(1.8),
+    paddingVertical: vh(1.4),
     borderRadius: vw(3),
     alignItems: "center",
     marginBottom: vh(3),

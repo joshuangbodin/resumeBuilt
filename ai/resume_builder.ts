@@ -28,7 +28,7 @@ type Education = {
   duration: string;
 };
 
-type ResumeInput = {
+export type ResumeInput = {
   name: string;
   contact: string;
   jobRole: string;
@@ -46,6 +46,7 @@ export async function aICallResume({
   education,
   skills,
 }: ResumeInput): Promise<string> {
+ 
   try {
     // Convert arrays into readable text
     const expText = experience
