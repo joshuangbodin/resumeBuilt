@@ -19,3 +19,8 @@ export type ResumeInput = {
   education: Education[];
   skills: string[];
 };
+
+export type store = {
+  userdata :any,
+  resumeData: ResumeInput
+}

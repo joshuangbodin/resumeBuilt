@@ -4,6 +4,9 @@ import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
 import { vh, vw } from "@/helpers/responsive";
 import { useColorScheme } from "@/hooks/use-color-scheme.web";
+import useStore from "@/hooks/use-store-context";
+import { setResumeData } from "@/store/state/actionController";
+import { storeReducer } from "@/store/state/reducer";
 import { ResumeInput } from "@/types/app.types";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -20,7 +23,7 @@ import {
 
 export default function ResumeForm() {
   const isDark = useColorScheme() === "dark";
-
+  const {store ,setStore} = useStore()
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState("");
   const [jobRole, setJobRole] = useState("");
@@ -129,30 +132,33 @@ export default function ResumeForm() {
 
   // Proceed
   const proceed = () => {
-    if (!fullName || !contact || !jobRole) {
-      Alert.alert("Please Fill out all Basic Information");
-      return;
-    }
+    
+    // if (!fullName || !contact || !jobRole) {
+    //   Alert.alert("Please Fill out all Basic Information");
+    //   return;
+    // }
 
-    let resumeData: ResumeInput = {
-      name: fullName,
-      contact: contact,
-      jobRole: jobRole,
-      experience: experiences,
-      education: educations,
-      skills: skills,
-    };
+    // let resumeData: ResumeInput = {
+    //   name: fullName,
+    //   contact: contact,
+    //   jobRole: jobRole,
+    //   experience: experiences,
+    //   education: educations,
+    //   skills: skills,
+    // };
+
+    // setStore(storeReducer(store , setResumeData(resumeData)))
+    // console.log(storeReducer(store , setResumeData(resumeData)))
 
     router.push({
-      pathname: "ai",
-      params: { resumeData: JSON.stringify(resumeData) },
+      pathname: "/ai",
     });
   };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" :  "padding"}
     >
       <ScreenHeader title="Resume Builder" left={<BackButton />} />
       <ScrollView contentContainerStyle={styles.container}>

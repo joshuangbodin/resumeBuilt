@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import Provider from "@/store/state/store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const unstable_settings = {
@@ -20,34 +21,35 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation:'slide_from_right'
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
-            title: "Overview",
+    <Provider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: "slide_from_right",
           }}
-        />
-        <Stack.Screen
-          name="UserData"
-          options={{
-            title: "Finish Setup",
-          }}
-        />
-        <Stack.Screen
-          name="signin"
-          options={{
-            title: "SignIn",
-          }}
-        />
-      </Stack>
-
-      <StatusBar style="auto" />
-    </ThemeProvider>
+        >
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "Overview",
+            }}
+          />
+          <Stack.Screen
+            name="UserData"
+            options={{
+              title: "Finish Setup",
+            }}
+          />
+          <Stack.Screen
+            name="signin"
+            options={{
+              title: "SignIn",
+            }}
+          />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </Provider>
   );
 }
