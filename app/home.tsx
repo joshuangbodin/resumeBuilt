@@ -1,27 +1,47 @@
-import React, { useEffect } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { Image } from "expo-image";
-import { router } from "expo-router";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/themed-text";
 import { vh, vw } from "@/helpers/responsive";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { supabase } from "@/supabase/supabase";
+import { Colors } from "@/constants/theme";
 
 export default function HomeScreen() {
   const offset = useSharedValue(50);
   const opacity = useSharedValue(0);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
+    getUser()
     offset.value = 0;
     opacity.value = 1;
   }, []);
+
+  const getUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error getting user:", error.message);
+      Alert.alert("Please Sign In");
+      return;
+    }
+    setUser(data.user.email ?? ""); // this is the signed-in user object
+  };
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -48,9 +68,19 @@ export default function HomeScreen() {
       <ScreenHeader
         title="Overview"
         right={
-          <TouchableOpacity onPress={() => router.push("signin")}>
-            <ThemedText style={{fontSize:vh(1.8)}} type="link">Sign In</ThemedText>
-          </TouchableOpacity>
+          user ? (
+            <View style={styles.user}>
+            <ThemedText style={styles.primaryBtnText}>
+              {user[0].toUpperCase()}
+            </ThemedText>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={() => router.push("/signin")}>
+              <ThemedText style={{ fontSize: vh(1.8) }} type="link">
+                Sign In
+              </ThemedText>
+            </TouchableOpacity>
+          )
         }
       />
 
@@ -87,7 +117,7 @@ export default function HomeScreen() {
             Start building your modern resume now
           </ThemedText>
           <TouchableOpacity
-            onPress={() => router.push("UserData")}
+            onPress={() => router.push("/UserData")}
             style={[styles.primaryBtn, { backgroundColor: primary }]}
           >
             <ThemedText style={styles.primaryBtnText}>
@@ -145,6 +175,15 @@ const styles = StyleSheet.create({
     fontSize: vw(4),
     marginBottom: vh(4),
   },
+  user:{
+    padding: vh(.5),
+    aspectRatio:1,
+    borderRadius: 200,
+    backgroundColor: Colors.dark.accent,
+    justifyContent:"center",
+    alignItems:"center",
+  }
+  ,
   card: {
     borderRadius: 20,
     padding: vw(5),

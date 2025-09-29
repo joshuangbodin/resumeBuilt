@@ -138,17 +138,17 @@ export default function ResumeForm() {
     //   return;
     // }
 
-    // let resumeData: ResumeInput = {
-    //   name: fullName,
-    //   contact: contact,
-    //   jobRole: jobRole,
-    //   experience: experiences,
-    //   education: educations,
-    //   skills: skills,
-    // };
+    let resumeData: ResumeInput = {
+      name: fullName,
+      contact: contact,
+      jobRole: jobRole,
+      experience: experiences,
+      education: educations,
+      skills: skills,
+    };
 
-    // setStore(storeReducer(store , setResumeData(resumeData)))
-    // console.log(storeReducer(store , setResumeData(resumeData)))
+    setStore(storeReducer(store , setResumeData(resumeData)))
+    console.log(storeReducer(store , setResumeData(resumeData)))
 
     router.push({
       pathname: "/ai",

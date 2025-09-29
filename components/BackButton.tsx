@@ -17,8 +17,7 @@ export default function BackButton({ label = "Back", onPress }: BackButtonProps)
   const previousRoute = usePreviousRoute();
 
   // derive a clean label (last part of route)
-  const autoLabel =
-    previousRoute?.split("/").filter(Boolean).pop() ?? label;
+  const autoLabel = label;
 
   return (
     <TouchableOpacity
@@ -28,7 +27,7 @@ export default function BackButton({ label = "Back", onPress }: BackButtonProps)
     >
       <Ionicons name="chevron-back" size={24} color={tint} />
       <ThemedText style={[styles.label, { color: tint }]}>
-        {autoLabel}
+        Back
       </ThemedText>
     </TouchableOpacity>
   );

@@ -204,7 +204,7 @@ Details:
 
 Requirements:
 1. Always output a detailed resume, filling in missing data with professional placeholders.
-2. Use <h3> for name, <p> for contact, and semantic headings for sections (<h4>, <h6>).
+2. Use <h2> for name, <p> for contact, and semantic headings for sections (<h3>, <h4>).
 3. Use lists (<ul><li>) for responsibilities and skills.
 4. Only return valid HTML snippet, no <html>/<body> wrappers.
 `;
