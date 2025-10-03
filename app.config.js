@@ -34,7 +34,7 @@ export default {
 
     web: {
       output: "static",
-      favicon: "./assets/images/favicon.png", // ✅ fixed
+      favicon: "./assets/images/favicon.png",
     },
 
     plugins: [
@@ -54,10 +54,12 @@ export default {
       [
         "react-native-google-mobile-ads",
         {
-          android_app_id: "ca-app-pub-1071099494556372~7315321846",
-          user_tracking_usage_description: "Used to deliver personalized ads.",
+          androidAppId: "ca-app-pub-1071099494556372~7315321846", // ✅ camelCase
+          iosAppId: "ca-app-pub-1071099494556372~7779190426", // ✅ use test ID if you don’t have iOS yet
+          userTrackingUsageDescription:
+            "Used to deliver personalized ads.",
         },
-      ], // ✅ no stray comma after this
+      ],
     ],
 
     experiments: {
