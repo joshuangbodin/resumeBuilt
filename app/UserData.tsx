@@ -151,7 +151,7 @@ export default function ResumeForm() {
     console.log(storeReducer(store , setResumeData(resumeData)))
 
     router.push({
-      pathname: "/ai",
+      pathname: "/Adscreen",
     });
   };
 
