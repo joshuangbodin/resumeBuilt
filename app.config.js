@@ -34,7 +34,7 @@ export default {
 
     web: {
       output: "static",
-      favicon: "./assets/images/favicon.png",
+      favicon: "./assets/images/favicon.png", // ✅ fixed
     },
 
     plugins: [
@@ -51,6 +51,13 @@ export default {
           },
         },
       ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          android_app_id: "ca-app-pub-1071099494556372~7315321846",
+          user_tracking_usage_description: "Used to deliver personalized ads.",
+        },
+      ], // ✅ no stray comma after this
     ],
 
     experiments: {
@@ -82,11 +89,4 @@ export default {
       },
     },
   },
-
-  // 👇 ADD THIS OUTSIDE expo
-  "react-native-google-mobile-ads": {
-    android_app_id: "ca-app-pub-1071099494556372~7315321846",
-    //ios_app_id: "ca-app-pub-xxxxxxxxxxxxxxxx~zzzzzzzzzzzz",
-    user_tracking_usage_description: "Used to deliver personalized ads."
-  }
 };
