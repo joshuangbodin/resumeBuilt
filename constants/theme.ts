@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
-const tintColorLight = "#2563EB"; // primary blue
-const tintColorDark = "#3B82F6"; // softer blue for dark
+const tintColorLight = "#173E94"; // primary blue
+const tintColorDark = "#173E94"; // softer blue for dark
 const accentLight = "#EC4899"; // pink
 const accentDark = "#F472B6"; // softer pink
 

@@ -21,11 +21,13 @@ import { vh, vw } from "@/helpers/responsive";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { supabase } from "@/supabase/supabase";
 import { Colors } from "@/constants/theme";
+import { useGlassModal } from "@/components/GlassModalContext";
 
 export default function HomeScreen() {
   const offset = useSharedValue(50);
   const opacity = useSharedValue(0);
   const [user, setUser] = useState("");
+  const { showModal } = useGlassModal();
 
   useEffect(() => {
     getUser()
@@ -36,8 +38,13 @@ export default function HomeScreen() {
   const getUser = async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-      console.error("Error getting user:", error.message);
-      Alert.alert("Please Sign In");
+      //console.error("Error getting user:", error.message);
+       showModal({
+            title: "User Not Found",
+            message: "Please Sign In",
+            onConfirm: () => router.push('/signin'),
+            actionText:"Sign In"
+          })
       return;
     }
     setUser(data.user.email ?? ""); // this is the signed-in user object
@@ -104,9 +111,7 @@ export default function HomeScreen() {
           ]}
         >
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
-            }}
+            source={require("../assets/images/generateresume.jpg")}
             style={styles.cardImage}
             contentFit="cover"
             transition={500}
@@ -135,9 +140,7 @@ export default function HomeScreen() {
           ]}
         >
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-            }}
+              source={require("../assets/images/premium.jpg")}
             style={styles.cardImage}
             contentFit="cover"
             transition={500}

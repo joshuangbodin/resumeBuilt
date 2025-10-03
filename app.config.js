@@ -20,12 +20,12 @@ export default {
     },
 
     android: {
-      softwareKeyboardLayoutMode: "resize", 
+      softwareKeyboardLayoutMode: "resize",
       package: "com.yourname.applyeazy",
       adaptiveIcon: {
-        foregroundImage: "./assets/images/android-icon-foreground.png",
-        backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png",
+        foregroundImage: "./assets/images/icon.png",
+        backgroundImage: "./assets/images/icon.png",
+        monochromeImage: "./assets/images/icon.png",
         backgroundColor: "#E6F4FE",
       },
       edgeToEdgeEnabled: true,
@@ -42,12 +42,12 @@ export default {
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
+          image: "./assets/images/icon.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#2563EB",
           dark: {
-            backgroundColor: "#000000",
+            backgroundColor: "#2563EB",
           },
         },
       ],
@@ -59,7 +59,7 @@ export default {
     },
 
     updates: {
-      url: "https://u.expo.dev/your-project-id",
+      url: "https://u.expo.dev/dad24bc5-36ff-401e-9ed4-4d3e86c89da0",
       fallbackToCacheTimeout: 0,
     },
 
@@ -78,8 +78,15 @@ export default {
       supabaseUrl: process.env.EXPO_SUPABASE_URL,
       supabaseKey: process.env.EXPO_SUPABASE_KEY,
       eas: {
-        projectId: "your-project-id", // Replace with your actual EAS project ID
+        projectId: "dad24bc5-36ff-401e-9ed4-4d3e86c89da0",
       },
     },
   },
+
+  // 👇 ADD THIS OUTSIDE expo
+  "react-native-google-mobile-ads": {
+    android_app_id: "ca-app-pub-1071099494556372~7315321846",
+    //ios_app_id: "ca-app-pub-xxxxxxxxxxxxxxxx~zzzzzzzzzzzz",
+    user_tracking_usage_description: "Used to deliver personalized ads."
+  }
 };
