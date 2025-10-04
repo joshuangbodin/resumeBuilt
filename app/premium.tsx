@@ -4,7 +4,8 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { vh, vw } from "@/helpers/responsive";
-import React, { useState } from "react";
+import useStore from "@/hooks/use-store-context";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -23,6 +24,9 @@ const Premium = () => {
   const colors = Colors[theme];
   const [visible, setVisible] = useState(false);
   const [webviewKey, setWebviewKey] = useState(0);
+  const { store, setStore } = useStore();
+
+  useEffect(() => console.log(store.userdata[0].email))
 
   const openSheet = () => {
     setWebviewKey((prev) => prev + 1); // refresh webview
@@ -51,7 +55,7 @@ const Premium = () => {
               currency: "NGN",
               payment_options: "card,ussd,banktransfer",
               customer: {
-                email: "customer@email.com",
+                email: "${store.userdata[0].email}",
                 phonenumber: "08100000000",
                 name: "John Doe",
               },

@@ -48,7 +48,7 @@ export default function HomeScreen() {
     }
     setUser(data.user.email ?? "");
     const da = await getUserData(data.user.email ?? "");
-    if (da) setStore(storeReducer(store, setUserEmail(da)));
+    if (da) await setStore(storeReducer(store, setUserEmail(da)));
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
