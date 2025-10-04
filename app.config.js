@@ -60,14 +60,7 @@ export default {
             "Used to deliver personalized ads.",
         },
       ],
-       [
-        "react-native-purchases",
-        {
-          ios: {
-            use_frameworks: "static"
-          }
-        }
-      ]
+      
     ],
 
     experiments: {

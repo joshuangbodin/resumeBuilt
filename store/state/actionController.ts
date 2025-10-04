@@ -1,10 +1,10 @@
 import { ResumeInput } from "@/types/app.types"
 import { SETRESUME, SETUSER } from "./actiontypes"
 
-export const setUserEmail = (email: string) => {
+export const setUserEmail = (userdata: any) => {
     return {
         type: SETUSER,
-        payload:{email}
+        payload:userdata
     }
 }
 

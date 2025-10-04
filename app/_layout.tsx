@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import { GlassModalProvider } from "@/components/GlassModalContext";
@@ -22,39 +23,41 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Provider>
-      <GlassModalProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: "slide_from_right",
-            }}
+    <GestureHandlerRootView>
+      <Provider>
+        <GlassModalProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
-            <Stack.Screen
-              name="index"
-              options={{
-                title: "Overview",
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: "slide_from_right",
               }}
-            />
-            <Stack.Screen
-              name="UserData"
-              options={{
-                title: "Finish Setup",
-              }}
-            />
-            <Stack.Screen
-              name="signin"
-              options={{
-                title: "SignIn",
-              }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </GlassModalProvider>
-    </Provider>
+            >
+              <Stack.Screen
+                name="index"
+                options={{
+                  title: "Overview",
+                }}
+              />
+              <Stack.Screen
+                name="UserData"
+                options={{
+                  title: "Finish Setup",
+                }}
+              />
+              <Stack.Screen
+                name="signin"
+                options={{
+                  title: "SignIn",
+                }}
+              />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </GlassModalProvider>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }

@@ -1,13 +1,7 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -15,22 +9,27 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useGlassModal } from "@/components/GlassModalContext";
 import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/themed-text";
-import { vh, vw } from "@/helpers/responsive";
-import { useThemeColor } from "@/hooks/use-theme-color";
-import { supabase } from "@/supabase/supabase";
 import { Colors } from "@/constants/theme";
-import { useGlassModal } from "@/components/GlassModalContext";
+import { vh, vw } from "@/helpers/responsive";
+import useStore from "@/hooks/use-store-context";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { setUserEmail } from "@/store/state/actionController";
+import { storeReducer } from "@/store/state/reducer";
+import { getUserData } from "@/supabase/services";
+import { supabase } from "@/supabase/supabase";
 
 export default function HomeScreen() {
   const offset = useSharedValue(50);
   const opacity = useSharedValue(0);
   const [user, setUser] = useState("");
   const { showModal } = useGlassModal();
+  const { store, setStore } = useStore();
 
   useEffect(() => {
-    getUser()
+    getUser();
     offset.value = 0;
     opacity.value = 1;
   }, []);
@@ -39,15 +38,17 @@ export default function HomeScreen() {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
       //console.error("Error getting user:", error.message);
-       showModal({
-            title: "User Not Found",
-            message: "Please Sign In",
-            onConfirm: () => router.push('/signin'),
-            actionText:"Sign In"
-          })
+      showModal({
+        title: "User Not Found",
+        message: "Please Sign In",
+        onConfirm: () => router.push("/signin"),
+        actionText: "Sign In",
+      });
       return;
     }
-    setUser(data.user.email ?? ""); // this is the signed-in user object
+    setUser(data.user.email ?? "");
+    const da = await getUserData(data.user.email ?? "");
+    if (da) setStore(storeReducer(store, setUserEmail(da)));
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -77,9 +78,9 @@ export default function HomeScreen() {
         right={
           user ? (
             <View style={styles.user}>
-            <ThemedText style={styles.primaryBtnText}>
-              {user[0].toUpperCase()}
-            </ThemedText>
+              <ThemedText style={styles.primaryBtnText}>
+                {user[0].toUpperCase()}
+              </ThemedText>
             </View>
           ) : (
             <TouchableOpacity onPress={() => router.push("/signin")}>
@@ -140,7 +141,7 @@ export default function HomeScreen() {
           ]}
         >
           <Image
-              source={require("../assets/images/premium.jpg")}
+            source={require("../assets/images/premium.jpg")}
             style={styles.cardImage}
             contentFit="cover"
             transition={500}
@@ -178,15 +179,14 @@ const styles = StyleSheet.create({
     fontSize: vw(4),
     marginBottom: vh(4),
   },
-  user:{
-    padding: vh(.5),
-    aspectRatio:1,
+  user: {
+    padding: vh(0.5),
+    aspectRatio: 1,
     borderRadius: 200,
     backgroundColor: Colors.dark.accent,
-    justifyContent:"center",
-    alignItems:"center",
-  }
-  ,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   card: {
     borderRadius: 20,
     padding: vw(5),

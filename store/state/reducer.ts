@@ -3,7 +3,8 @@ import { GETSTATE, SETRESUME, SETUSER } from "./actiontypes";
 
 const initialState:store = {
     userdata: {
-        email:''
+        email:'',
+        premium:false,
     },
     resumeData: {
         name: "",

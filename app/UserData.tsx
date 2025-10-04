@@ -11,7 +11,6 @@ import { ResumeInput } from "@/types/app.types";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -23,7 +22,7 @@ import {
 
 export default function ResumeForm() {
   const isDark = useColorScheme() === "dark";
-  const {store ,setStore} = useStore()
+  const { store, setStore } = useStore();
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState("");
   const [jobRole, setJobRole] = useState("");
@@ -132,7 +131,6 @@ export default function ResumeForm() {
 
   // Proceed
   const proceed = () => {
-    
     // if (!fullName || !contact || !jobRole) {
     //   Alert.alert("Please Fill out all Basic Information");
     //   return;
@@ -147,18 +145,18 @@ export default function ResumeForm() {
       skills: skills,
     };
 
-    setStore(storeReducer(store , setResumeData(resumeData)))
-    console.log(storeReducer(store , setResumeData(resumeData)))
+    setStore(storeReducer(store, setResumeData(resumeData)));
+    console.log(storeReducer(store, setResumeData(resumeData)));
 
     router.push({
-      pathname: "/Adscreen",
+      pathname: store.userdata.premium ? "/ai" : "/Adscreen",
     });
   };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" :  "padding"}
+      behavior={Platform.OS === "ios" ? "padding" : "padding"}
     >
       <ScreenHeader title="Resume Builder" left={<BackButton />} />
       <ScrollView contentContainerStyle={styles.container}>
